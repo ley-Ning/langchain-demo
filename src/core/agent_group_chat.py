@@ -176,10 +176,6 @@ class AgentGroupChat:
         Returns:
             True 表示应该终止对话，False 表示继续对话
         """
-        # 条件1：检查是否超过最大轮数
-        if len(self.history) > self.max_rounds:
-            return True
-        
         # 如果对话刚开始，不终止
         if len(self.history) < 2:
             return False
@@ -188,7 +184,7 @@ class AgentGroupChat:
         recent_history = self._format_history(last_n=5)
         
         # 额外的安全检查：如果历史中包含"取消"、"不给钱"、"犹豫"等关键词，强制不终止
-        # 这样可以让肖斩天继续催债
+        # 这样可以让肖斩天继续催债（优先级最高，即使超过 max_rounds 也要继续）
         keywords_to_check = ["取消", "已取消", "不给钱", "犹豫", "还在犹豫", "想跑"]
         found_keywords = [kw for kw in keywords_to_check if kw in recent_history]
         
@@ -197,6 +193,13 @@ class AgentGroupChat:
             print(f"   检测到关键词: {', '.join(found_keywords)}")
             print(f"   ❌ 强制不终止（催债进行中）\n")
             return False
+        
+        # 条件1：检查是否超过最大轮数（在关键词检查之后）
+        if len(self.history) > self.max_rounds:
+            print(f"\n🔍 [TerminationStrategy 调试]")
+            print(f"   对话轮数: {len(self.history)} > {self.max_rounds}")
+            print(f"   ✅ 超过最大轮数，强制终止\n")
+            return True
         
         # 条件2：使用 LLM 判断业务逻辑是否完成
         # 终止策略：只有当用户付款完成时才终止对话
@@ -423,10 +426,9 @@ class AgentGroupChat:
         Yields:
             元组 (AIMessage, token_usage_dict): 智能体的响应消息和 token 使用统计
         """
-        round_count = 0
-        
-        # 主循环：持续进行对话，直到达到终止条件
-        while round_count < self.max_rounds:
+        # 主循环：持续进行对话，直到 should_terminate() 返回 True
+        # 不再使用 round_count 硬限制，而是完全依赖 should_terminate() 的判断
+        while True:
             # 步骤1：选择下一个发言者（SelectionStrategy）
             next_speaker = self.select_next_speaker()
             
@@ -441,10 +443,9 @@ class AgentGroupChat:
                 yield response, token_usage
             
             # 步骤5：判断是否应该终止对话（TerminationStrategy）
+            # should_terminate() 内部会检查 max_rounds，所以这里不需要额外检查
             if self.should_terminate():
                 break
-            
-            round_count += 1
     
     def _format_history(self, last_n: int = 5) -> str:
         """

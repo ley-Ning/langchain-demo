@@ -80,7 +80,8 @@ def main():
     }
     
     # 创建 AgentGroupChat 实例
-    chat = AgentGroupChat(agents=agents, llm=llm, max_rounds=30)
+    # max_rounds 设置为 50，给催债流程更多时间
+    chat = AgentGroupChat(agents=agents, llm=llm, max_rounds=50)
     
     # 欢迎信息
     print("\n" + "="*60)
