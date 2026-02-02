@@ -178,7 +178,7 @@ python3 test_auto.py
 
 ```
 langchain-demo/
-├── main_groupchat.py                # 主程序（AgentGroupChat 方式）⭐
+├── main_groupchat.py                # 主程序 ⭐
 ├── demo_final.py                    # 演示程序（自动支付）
 ├── test_auto.py                     # 自动化测试（不需要 API）
 ├── test_cancel.py                   # 取消支付测试
@@ -203,10 +203,7 @@ langchain-demo/
     │   └── lisi_agent.py            # 李四智能体定义
     └── core/                        # 核心业务层
         ├── __init__.py
-        ├── agent_group_chat.py      # AgentGroupChat 实现 ⭐
-        ├── state.py                 # 状态定义（旧版）
-        ├── workflow.py              # 工作流管理（旧版）
-        └── chat_manager.py          # 聊天管理器（旧版）
+        └── agent_group_chat.py      # AgentGroupChat 实现 ⭐
 ```
 
 ## 🏗️ 架构说明
@@ -222,7 +219,7 @@ langchain-demo/
 
 | 文件 | 说明 | 重要性 |
 |------|------|--------|
-| `main_groupchat.py` | 主程序入口，AgentGroupChat 方式 | ⭐⭐⭐ |
+| `main_groupchat.py` | 主程序入口 | ⭐⭐⭐ |
 | `src/core/agent_group_chat.py` | AgentGroupChat 核心实现 | ⭐⭐⭐ |
 | `src/agents/zhangsan_agent.py` | 张三智能体定义 | ⭐⭐ |
 | `src/agents/lisi_agent.py` | 李四智能体定义 | ⭐⭐ |
