@@ -3,6 +3,12 @@
 
 这个程序演示了如何使用 AgentGroupChat 实现多智能体协作。
 
+角色：
+1. 张三（铁匠）- 暴躁粗鲁
+2. 李四（学徒）- 活泼机灵
+3. 麻子（财务）- 细腻严谨
+4. 肖斩天（打手）- 凶狠暴力
+
 主要特性：
 1. 智能体群聊：多个智能体自动轮流对话
 2. 自动选择发言者：通过 SelectionStrategy 智能选择下一个发言者
@@ -16,6 +22,8 @@ import time
 from langchain_openai import AzureChatOpenAI
 from src.agents.zhangsan_agent import create_zhangsan_agent
 from src.agents.lisi_agent import create_lisi_agent
+from src.agents.mazi_agent import create_mazi_agent
+from src.agents.xiaozhan_agent import create_xiaozhan_agent
 from src.core.agent_group_chat import AgentGroupChat
 from src.config.settings import settings
 
@@ -41,7 +49,7 @@ def main():
     
     流程：
     1. 初始化 LLM（Azure OpenAI）
-    2. 创建智能体（张三和李四）
+    2. 创建智能体（张三、李四、麻子、肖斩天）
     3. 创建智能体群聊
     4. 获取用户输入
     5. 运行群聊，自动完成多智能体协作
@@ -59,22 +67,27 @@ def main():
     # 每个智能体返回 (llm, prompt, tools) 元组
     zhangsan_data = create_zhangsan_agent(llm)
     lisi_data = create_lisi_agent(llm)
+    mazi_data = create_mazi_agent(llm)
+    xiaozhan_data = create_xiaozhan_agent(llm)
     
     # 步骤3：创建智能体群聊
     # 将智能体组织成字典，键为智能体名称
     agents = {
         "张三": zhangsan_data,
-        "李四": lisi_data
+        "李四": lisi_data,
+        "麻子": mazi_data,
+        "肖斩天": xiaozhan_data
     }
     
     # 创建 AgentGroupChat 实例
-    chat = AgentGroupChat(agents=agents, llm=llm, max_rounds=20)
+    chat = AgentGroupChat(agents=agents, llm=llm, max_rounds=30)
     
     # 欢迎信息
     print("\n" + "="*60)
-    print("🎮 修仙游戏 - 铁匠铺")
+    print("🎮 修仙游戏 - 黑社会铁匠铺")
     print("="*60)
     print("欢迎来到铁匠铺，你想打造什么装备？")
+    print("⚠️  警告：这里有打手肖斩天，不给钱后果自负！")
     print("="*60)
     
     # 步骤4：装备选择菜单
@@ -118,8 +131,23 @@ def main():
     for response, token_usage in chat.run():
         agent_name = response.name if hasattr(response, 'name') else "未知"
         
+        # 根据角色显示不同的图标
+        icon = {
+            "张三": "🔨",
+            "李四": "👦",
+            "麻子": "💰",
+            "肖斩天": "💀"
+        }.get(agent_name, "🤖")
+        
         # 流式输出响应内容
-        sys.stdout.write(f"🔨 {agent_name}: ")
+        sys.stdout.write(f"{icon} {agent_name}: ")
+        sys.stdout.flush()
+        print_stream(response.content, delay=0.015)
+        
+        # 显示 token 使用情况
+        print(f"   💰 Token: 输入={token_usage['prompt_tokens']}, "
+              f"输出={token_usage['completion_tokens']}, "
+              f"总计={token_usage['total_tokens']}\n")
         sys.stdout.flush()
         print_stream(response.content, delay=0.015)
         

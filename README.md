@@ -30,7 +30,7 @@
   - 查询装备价格
   - 向玩家发起支付请求
 
-### 版本 2：黑社会版（4个角色）⭐ 新增
+### 版本 2：黑社会版（4个角色）⭐ 当前版本
 
 这是一个"黑社会铁匠铺"场景，包含四个 NPC 智能体：
 
@@ -126,22 +126,10 @@ TEMPERATURE=0.7
 
 ### 4. 运行项目
 
-#### 🎯 方式 1：主程序（3个角色）
+#### 🎯 方式 1：主程序（4个角色）⭐ 推荐
 
 ```bash
 python3 main_groupchat.py
-```
-
-**特点：**
-- ✅ 智能体自动轮流对话
-- ✅ 流式输出（逐字显示）
-- ✅ Token 统计（每次 + 总计）
-- ✅ 支持取消支付后继续对话
-
-#### 🔥 方式 2：黑社会版（4个角色）⭐ 推荐
-
-```bash
-python3 main_4agents.py
 ```
 
 **特点：**
@@ -199,25 +187,9 @@ python3 main_4agents.py
 ============================================================
 ```
 
-#### 🧪 方式 3：演示版本（自动支付）
+#### 🧪 方式 2：测试脚本
 
 ```bash
-python3 demo_final.py
-```
-
-**特点：**
-- 自动模拟支付流程
-- 适合快速演示和测试
-
-#### 📝 方式 4：测试脚本
-
-```bash
-# 测试取消支付场景
-python3 test_cancel.py
-
-# 测试支付逻辑
-python3 test_payment.py
-
 # 测试自动化逻辑（不需要 API）
 python3 test_auto.py
 ```
@@ -226,11 +198,7 @@ python3 test_auto.py
 
 ```
 langchain-demo/
-├── main_groupchat.py                # 主程序 ⭐
-├── demo_final.py                    # 演示程序（自动支付）
-├── test_auto.py                     # 自动化测试（不需要 API）
-├── test_cancel.py                   # 取消支付测试
-├── test_payment.py                  # 支付逻辑测试
+├── main_groupchat.py                # 主程序（4个角色）⭐
 ├── requirements.txt                 # 依赖包列表
 ├── .env.example                     # 环境变量示例
 ├── .gitignore                       # Git 忽略文件
@@ -244,11 +212,15 @@ langchain-demo/
     ├── plugins/                     # 插件层（工具集）
     │   ├── __init__.py
     │   ├── zhangsan_plugin.py       # 张三的工具（查询材料）
-    │   └── lisi_plugin.py           # 李四的工具（查询价格、收款）
+    │   ├── lisi_plugin.py           # 李四的工具（查询价格、收款）
+    │   ├── mazi_plugin.py           # 麻子的工具（计算账单）⭐
+    │   └── xiaozhan_plugin.py       # 肖斩天的工具（催债）⭐
     ├── agents/                      # 智能体层
     │   ├── __init__.py
     │   ├── zhangsan_agent.py        # 张三智能体定义
-    │   └── lisi_agent.py            # 李四智能体定义
+    │   ├── lisi_agent.py            # 李四智能体定义
+    │   ├── mazi_agent.py            # 麻子智能体定义 ⭐
+    │   └── xiaozhan_agent.py        # 肖斩天智能体定义 ⭐
     └── core/                        # 核心业务层
         ├── __init__.py
         └── agent_group_chat.py      # AgentGroupChat 实现 ⭐
@@ -267,12 +239,16 @@ langchain-demo/
 
 | 文件 | 说明 | 重要性 |
 |------|------|--------|
-| `main_groupchat.py` | 主程序入口 | ⭐⭐⭐ |
+| `main_groupchat.py` | 主程序入口（4个角色）| ⭐⭐⭐ |
 | `src/core/agent_group_chat.py` | AgentGroupChat 核心实现 | ⭐⭐⭐ |
 | `src/agents/zhangsan_agent.py` | 张三智能体定义 | ⭐⭐ |
 | `src/agents/lisi_agent.py` | 李四智能体定义 | ⭐⭐ |
+| `src/agents/mazi_agent.py` | 麻子智能体定义 ⭐ | ⭐⭐ |
+| `src/agents/xiaozhan_agent.py` | 肖斩天智能体定义 ⭐ | ⭐⭐ |
 | `src/plugins/zhangsan_plugin.py` | 张三的工具集 | ⭐⭐ |
 | `src/plugins/lisi_plugin.py` | 李四的工具集 | ⭐⭐ |
+| `src/plugins/mazi_plugin.py` | 麻子的工具集 ⭐ | ⭐⭐ |
+| `src/plugins/xiaozhan_plugin.py` | 肖斩天的工具集 ⭐ | ⭐⭐ |
 | `src/config/settings.py` | 配置管理 | ⭐ |
 | `配置说明.md` | 详细的逻辑说明文档 | ⭐ |
 
