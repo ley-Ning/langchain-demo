@@ -135,20 +135,30 @@ class AgentGroupChat:
         # 解析响应，提取智能体名称
         selected = response.content.strip()
         
+        # 打印调试信息
+        print(f"\n🔍 [SelectionStrategy 调试]")
+        print(f"   上一个发言者: {last_speaker}")
+        print(f"   LLM 选择结果: {selected}")
+        
         # 如果响应中包含智能体名称，返回它
         for name in agent_names:
             if name in selected:
+                print(f"   ✅ 下一个发言者: {name}\n")
                 return name
         
         # 默认轮流策略：如果 LLM 无法决定，则根据上一个发言者决定
         # 打造过程中主要是张三和李四轮流
+        fallback_speaker = None
         if last_speaker == "张三":
-            return "李四"
+            fallback_speaker = "李四"
         elif last_speaker == "李四":
-            return "张三"
+            fallback_speaker = "张三"
         else:
             # 如果是麻子或肖斩天，默认返回李四
-            return "李四"
+            fallback_speaker = "李四"
+        
+        print(f"   ⚠️ LLM 未明确选择，使用默认策略: {fallback_speaker}\n")
+        return fallback_speaker
     
     def should_terminate(self, last_speaker: str = None) -> bool:
         """
@@ -179,7 +189,13 @@ class AgentGroupChat:
         
         # 额外的安全检查：如果历史中包含"取消"、"不给钱"、"犹豫"等关键词，强制不终止
         # 这样可以让肖斩天继续催债
-        if any(keyword in recent_history for keyword in ["取消", "已取消", "不给钱", "犹豫", "还在犹豫", "想跑"]):
+        keywords_to_check = ["取消", "已取消", "不给钱", "犹豫", "还在犹豫", "想跑"]
+        found_keywords = [kw for kw in keywords_to_check if kw in recent_history]
+        
+        if found_keywords:
+            print(f"\n🔍 [TerminationStrategy 调试]")
+            print(f"   检测到关键词: {', '.join(found_keywords)}")
+            print(f"   ❌ 强制不终止（催债进行中）\n")
             return False
         
         # 条件2：使用 LLM 判断业务逻辑是否完成
@@ -220,6 +236,11 @@ class AgentGroupChat:
         
         # 如果 LLM 回复包含"是"，则终止对话
         should_end = "是" in response.content
+        
+        # 打印调试信息
+        print(f"\n🔍 [TerminationStrategy 调试]")
+        print(f"   LLM 判断结果: {response.content.strip()}")
+        print(f"   {'✅ 对话应该结束' if should_end else '❌ 对话继续'}\n")
         
         return should_end
     
@@ -276,6 +297,8 @@ class AgentGroupChat:
         
         # 处理工具调用（如果有）
         if hasattr(response, 'tool_calls') and response.tool_calls:
+            print(f"\n🔧 [工具调用调试] {agent_name} 调用了 {len(response.tool_calls)} 个工具")
+            
             # 将包含工具调用的 AI 消息添加到历史
             self.history.append(response)
             
@@ -286,6 +309,9 @@ class AgentGroupChat:
                 tool_args = tool_call['args']
                 tool_call_id = tool_call['id']
                 
+                print(f"   📌 工具名称: {tool_name}")
+                print(f"   📌 工具参数: {tool_args}")
+                
                 # 在智能体的工具列表中查找对应的工具
                 result = None
                 tool_found = False
@@ -295,10 +321,16 @@ class AgentGroupChat:
                         try:
                             # 执行工具
                             result = tool.invoke(tool_args)
+                            print(f"   ✅ 工具执行成功")
+                            print(f"   📤 返回结果: {result}")
                         except Exception as e:
                             # 如果工具执行失败，记录错误
                             result = f"工具执行失败: {str(e)}"
+                            print(f"   ❌ 工具执行失败: {str(e)}")
                         break
+                
+                if not tool_found:
+                    print(f"   ❌ 工具不存在: {tool_name}")
                 
                 # 创建工具消息（必须为每个 tool_call 创建对应的 tool message）
                 if tool_found:
@@ -315,6 +347,8 @@ class AgentGroupChat:
                 
                 tool_messages.append(tool_msg)
                 self.history.append(tool_msg)
+            
+            print()  # 空行分隔
             
             # 如果有工具结果，让智能体基于工具结果继续生成响应
             if tool_messages:
