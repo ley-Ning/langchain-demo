@@ -16,16 +16,16 @@ class XiaoZhanPlugin:
     @staticmethod
     def threaten_customer() -> str:
         """
-        威胁客人
+        警告客人
         
         Returns:
-            威胁语句
+            警告语句
         """
         threats = [
-            "💢 老子的拳头可不认人！",
-            "💢 不想挨揍就赶紧掏钱！",
-            "💢 别逼老子动手，后果自负！",
-            "💢 这条街上还没人敢欠我们的钱！"
+            "⚠️ 我劝你最好想清楚后果！",
+            "⚠️ 别不识抬举，这是最后机会！",
+            "⚠️ 欠债还钱，天经地义！",
+            "⚠️ 这条街上还没人敢欠我们的钱！"
         ]
         import random
         return random.choice(threats)
@@ -33,16 +33,16 @@ class XiaoZhanPlugin:
     @staticmethod
     def beat_customer() -> str:
         """
-        打人（催债）
+        展示威慑力
         
         Returns:
-            打人动作描述
+            威慑动作描述
         """
         actions = [
-            "👊 肖斩天一拳打在桌子上，桌子应声而裂！",
-            "👊 肖斩天抓起铁锤，狠狠砸在地上，地面都震了三震！",
-            "👊 肖斩天撸起袖子，露出满臂的刀疤，眼神凶狠！",
-            "👊 肖斩天一脚踢翻椅子，整个铁匠铺都安静了！"
+            "👊 肖斩天重重一拍桌子，桌子发出巨响！",
+            "👊 肖斩天用力跺脚，整个铁匠铺都震了一下！",
+            "👊 肖斩天撸起袖子，露出结实的肌肉，眼神严肃！",
+            "👊 肖斩天站起身来，气势逼人！"
         ]
         import random
         return random.choice(actions)
@@ -60,12 +60,12 @@ class XiaoZhanPlugin:
             收款结果
         """
         print(f"\n" + "="*60)
-        print(f"💀 [肖斩天催债]")
+        print(f"⚠️ [肖斩天催债]")
         print("="*60)
         print(f"装备：【{equipment_name}】")
         print(f"金额：{amount} 灵石")
         print("="*60)
-        print("💀 肖斩天：老子最后问一次，给不给钱？！")
+        print("⚠️ 肖斩天：我最后问一次，给不给钱？")
         print("="*60)
         
         try:
@@ -74,12 +74,12 @@ class XiaoZhanPlugin:
                 
                 if user_input in ['y', 'yes', '是']:
                     print("\n✅ 你乖乖交钱了")
-                    return f"✅ 玩家被打怕了，乖乖支付了 {amount} 灵石！"
+                    return f"✅ 玩家被震慑住了，乖乖支付了 {amount} 灵石！"
                 elif user_input in ['n', 'no', '否']:
-                    print("\n💢 你还敢说不？！")
-                    return f"💢 玩家还在嘴硬，继续不给钱！"
+                    print("\n⚠️ 你还敢说不？")
+                    return f"⚠️ 玩家还在犹豫，继续不给钱！"
                 else:
                     print("⚠️  请输入 y (给钱) 或 n (不给)")
         except (EOFError, KeyboardInterrupt):
-            print("\n💢 想跑？没门！")
-            return f"💢 玩家想跑，被肖斩天拦住了！"
+            print("\n⚠️ 想跑？没门！")
+            return f"⚠️ 玩家想跑，被肖斩天拦住了！"

@@ -148,13 +148,6 @@ def main():
         print(f"   💰 Token: 输入={token_usage['prompt_tokens']}, "
               f"输出={token_usage['completion_tokens']}, "
               f"总计={token_usage['total_tokens']}\n")
-        sys.stdout.flush()
-        print_stream(response.content, delay=0.015)
-        
-        # 显示 token 使用情况
-        print(f"   💰 Token: 输入={token_usage['prompt_tokens']}, "
-              f"输出={token_usage['completion_tokens']}, "
-              f"总计={token_usage['total_tokens']}\n")
     
     # 显示总 token 使用情况
     total_usage = chat.get_total_token_usage()

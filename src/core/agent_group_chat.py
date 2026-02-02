@@ -68,20 +68,7 @@ class AgentGroupChat:
         self.history.append(HumanMessage(content=content, name="玩家"))
     
     def select_next_speaker(self) -> str:
-        """
-        选择下一个发言的智能体（SelectionStrategy）
-        
-        通过 LLM 分析对话历史，智能地选择下一个应该发言的智能体。
-        
-        选择策略：
-        1. 如果没有历史记录，默认返回第一个智能体（张三）
-        2. 使用 LLM 分析最近的对话历史（最近 3 条消息）
-        3. 根据对话上下文，选择最合适的下一个发言者
-        4. 如果 LLM 无法决定，则采用轮流策略
-        
-        Returns:
-            下一个应该发言的智能体名称
-        """
+
         if not self.history:
             # 如果没有历史记录，默认张三先说
             return "张三"
