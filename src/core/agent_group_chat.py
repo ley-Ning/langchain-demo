@@ -68,30 +68,59 @@ class AgentGroupChat:
         self.history.append(HumanMessage(content=content, name="玩家"))
     
     def select_next_speaker(self) -> str:
-
+        """
+        选择下一个发言者（SelectionStrategy）
+        
+        根据对话历史和业务规则，智能选择下一个应该发言的智能体。
+        
+        业务流程规则：
+        1. 玩家下单 → 张三开始打造
+        2. 打造过程中 → 张三和李四轮流（张三指挥，李四执行）
+        3. 张三说"装备打造完成了" → 麻子算账
+        4. 麻子生成账单 → 李四收款
+        5. 李四收款失败 → 李四提议请肖斩天
+        6. 李四说"请肖斩天出马" → 肖斩天催债
+        7. 肖斩天收到钱 → 李四把钱交给张三 → 结束
+        
+        Returns:
+            下一个发言者的名称
+        """
         if not self.history:
             # 如果没有历史记录，默认张三先说
             return "张三"
         
-        # 获取最后一条消息的发言者
+        # 获取最后一条消息的发言者和内容
         last_message = self.history[-1]
         last_speaker = getattr(last_message, 'name', None)
+        last_content = last_message.content if hasattr(last_message, 'content') else ""
         
         # 构建选择提示词
         agent_names = list(self.agents.keys())
-        recent_history = self._format_history(last_n=3)
+        recent_history = self._format_history(last_n=5)
         
-        selection_prompt = f"""根据最近发言的参与者，确定对话中接下来轮到哪位参与者发言。
+        selection_prompt = f"""你是一个智能对话调度器，需要根据业务流程规则选择下一个发言者。
 
-仅说出接下来轮到发言的参与者的姓名。
+可选的参与者：{', '.join(agent_names)}
 
-只能从以下参与者中选择：
-{', '.join(agent_names)}
+业务流程规则（必须严格遵守）：
+1. 玩家下单后 → 张三开始打造装备
+2. 打造过程中 → 张三和李四轮流配合（张三指挥一个工序，李四执行一个工序）
+3. 当张三说"装备打造完成了"或"去算账" → 下一个必须是麻子
+4. 当麻子生成账单或说"让李四去收款" → 下一个必须是李四
+5. 当李四收款失败或说"请肖斩天出马" → 下一个必须是肖斩天
+6. 当肖斩天催债完成或收到钱 → 下一个必须是李四（把钱交给张三）
+7. 当李四把钱交给张三 → 下一个必须是张三（说几句结束语）
 
-历史记录:
+特殊规则：
+- 麻子只在算账时发言，其他时候不发言
+- 肖斩天只在催债时发言，其他时候不发言
+- 打造过程中主要是张三和李四轮流
+
+最近的对话历史：
 {recent_history}
 
-请直接回答参与者的姓名，不要有任何其他内容。"""
+根据以上规则和历史记录，下一个应该发言的参与者是谁？
+请只回答参与者的姓名（张三、李四、麻子或肖斩天），不要有任何其他内容。"""
         
         messages = [SystemMessage(content=selection_prompt)]
         response = self.llm.invoke(messages)
@@ -109,12 +138,15 @@ class AgentGroupChat:
             if name in selected:
                 return name
         
-        # 默认轮流策略：如果 LLM 无法决定，则简单轮流
-        # 如果上一个是张三，下一个是李四，反之亦然
+        # 默认轮流策略：如果 LLM 无法决定，则根据上一个发言者决定
+        # 打造过程中主要是张三和李四轮流
         if last_speaker == "张三":
             return "李四"
-        else:
+        elif last_speaker == "李四":
             return "张三"
+        else:
+            # 如果是麻子或肖斩天，默认返回李四
+            return "李四"
     
     def should_terminate(self, last_speaker: str = None) -> bool:
         """
