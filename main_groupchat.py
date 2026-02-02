@@ -1,8 +1,7 @@
 """
 主程序 - 使用 AgentGroupChat 方式实现多智能体协作
 
-这个程序演示了如何使用 AgentGroupChat 实现多智能体协作，
-类似于 C# Semantic Kernel 的 AgentGroupChat 功能。
+这个程序演示了如何使用 AgentGroupChat 实现多智能体协作。
 
 主要特性：
 1. 智能体群聊：多个智能体自动轮流对话

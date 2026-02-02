@@ -1,8 +1,7 @@
 """
-智能体群聊模块 - 类似 C# Semantic Kernel 的 AgentGroupChat
+智能体群聊模块 - AgentGroupChat
 
-这个模块实现了多智能体群聊功能，允许多个智能体自动轮流对话，
-类似于 Microsoft Semantic Kernel 中的 AgentGroupChat。
+这个模块实现了多智能体群聊功能，允许多个智能体自动轮流对话。
 
 主要功能：
 1. 智能体管理：管理多个智能体及其工具
@@ -25,7 +24,7 @@ class AgentGroupChat:
     智能体群聊管理器
     
     这个类管理多个智能体的群聊，自动选择发言者，判断对话终止条件，
-    并处理工具调用。类似于 C# Semantic Kernel 的 AgentGroupChat。
+    并处理工具调用。
     
     Attributes:
         agents: 智能体字典，格式为 {名称: (llm, prompt, tools)}
@@ -72,7 +71,6 @@ class AgentGroupChat:
         """
         选择下一个发言的智能体（SelectionStrategy）
         
-        这个方法实现了类似 C# Semantic Kernel 中的 SelectionStrategy，
         通过 LLM 分析对话历史，智能地选择下一个应该发言的智能体。
         
         选择策略：
@@ -135,7 +133,6 @@ class AgentGroupChat:
         """
         判断对话是否应该终止（TerminationStrategy）
         
-        这个方法实现了类似 C# Semantic Kernel 中的 TerminationStrategy，
         通过 LLM 分析对话历史，判断对话是否应该结束。
         
         终止条件：
@@ -165,8 +162,7 @@ class AgentGroupChat:
             return False
         
         # 条件2：使用 LLM 判断业务逻辑是否完成
-        # 终止策略的提示词，类似 C# 中的 KernelFunctionTerminationStrategy
-        # 这里的业务逻辑是：只有当用户付款完成时才终止对话（取消支付不终止）
+        # 终止策略：只有当用户付款完成时才终止对话（取消支付不终止）
         termination_prompt = f"""判断对话是否应该结束。
 
 只有当满足以下条件时，才回复"是"：

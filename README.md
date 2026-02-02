@@ -2,16 +2,14 @@
 
 这是一个使用 Python + LangChain 实现的多智能体协作系统，模拟修仙游戏中的铁匠铺场景。
 
-**核心特性：** 完全对应 C# Semantic Kernel 的 AgentGroupChat 实现方式，支持流式输出和 Token 统计。
-
 ## ✨ 主要功能
 
-- 🤖 多智能体自动协作（类似 C# Semantic Kernel 的 AgentGroupChat）
+- 🤖 多智能体自动协作
 - 🎯 自动选择发言者（SelectionStrategy）
 - 🛑 自动判断终止（TerminationStrategy）
 - 🔧 工具调用（查询材料、价格、收款）
-- 💬 流式输出（逐字显示，打字机效果）
-- 📊 Token 统计（每次对话 + 总计）
+- � 流式判输出（逐字显示，打字机效果）
+- � Token 询统计（每次对话 + 总计）
 - 🎮 取消支付后继续对话（张三会发飙）
 
 ## 场景说明
@@ -31,18 +29,6 @@
   - 向玩家发起支付请求
 
 ## 技术实现
-
-### 对应 C# Semantic Kernel 的实现
-
-本项目完全对应 C# Semantic Kernel 的 AgentGroupChat 实现方式：
-
-| C# Semantic Kernel | Python LangChain | 说明 |
-|-------------------|------------------|------|
-| `AgentGroupChat` | `AgentGroupChat` | 智能体群聊管理 |
-| `SelectionStrategy` | `select_next_speaker()` | 自动选择下一个发言者 |
-| `TerminationStrategy` | `should_terminate()` | 自动判断对话终止 |
-| `KernelPlugin` | `@tool` 装饰器 | 工具定义 |
-| `AgentDefinition` | 系统提示词 | 智能体角色定义 |
 
 ### 核心组件
 
@@ -112,14 +98,13 @@ TEMPERATURE=0.7
 
 ### 4. 运行项目
 
-#### 🎯 方式 1：AgentGroupChat 方式（推荐）
+#### 🎯 方式 1：主程序（推荐）
 
 ```bash
 python3 main_groupchat.py
 ```
 
 **特点：**
-- ✅ 完全对应 C# Semantic Kernel 的 AgentGroupChat
 - ✅ 智能体自动轮流对话
 - ✅ 流式输出（逐字显示）
 - ✅ Token 统计（每次 + 总计）
@@ -287,7 +272,7 @@ langchain-demo/
 
 ### 1. AgentGroupChat 实现
 
-完全对应 C# Semantic Kernel 的实现方式：
+智能体群聊管理，自动协作：
 
 ```python
 # 创建智能体群聊
@@ -301,7 +286,7 @@ chat = AgentGroupChat(
 chat.add_user_message("我想打造一把飞剑")
 
 # 运行群聊（自动选择发言者、自动终止）
-for response in chat.run():
+for response, token_usage in chat.run():
     print(f"{response.name}: {response.content}")
 ```
 
